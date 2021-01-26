@@ -13,6 +13,7 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
   const [fetchedTokens, setTokes] = useState();
   const [value, setValue] = useState('')
   const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
+  const [dataHasLoaded, setDataHasLoaded] = useState(false);
   
   useEffect(() => {
     console.log(props, code)
@@ -48,11 +49,12 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
 
   const getSomeData = async (entryDate) => {
     setEntryDate(entryDate)
+    setDataHasLoaded(false)
     const date = moment().format('YYYY-MM-DDTHH:MM:ss');
     const startDate = moment().subtract(entryDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
     let theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${fetchedTokens.accessToken}&refresh_token=${fetchedTokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
     setReadings(theReadings);
-    console.log(theReadings)
+    setDataHasLoaded(true)
   }
 
   useEffect(() => {
@@ -72,14 +74,15 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
         <div><p>Connect your Dexcom Account</p><a href="https://api.dexcom.com/v2/oauth2/login?client_id=J0IbzpVpCwyHz7WjUC7eLxHFgPU0PDqV&redirect_uri=http://localhost:3000&response_type=code&scope=offline_access">Login</a></div>
       ) }
 
-      {/* {entryDate}
+      <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
+
+      
       <button onClick={() => getSomeData(31)}>31 days</button>
       <button onClick={() => getSomeData(60)}>60 days</button>
       <button onClick={() => getSomeData(90)}>90 days</button>
       <button onClick={() => getSomeData(entryDate)}>Refresh</button>
-      Dashboard , { mounted ? <Readings readings={readings} days={entryDate}/> : <div>Loading readings...</div>} */}
+      Dashboard , { dataHasLoaded ? <Readings readings={readings} days={entryDate}/> : <div>Loading readings...</div>} 
       <h1></h1>
-      <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
     </div>
   )
 }
