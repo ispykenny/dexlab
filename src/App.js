@@ -1,30 +1,58 @@
-import './App.css';
+import './App.scss';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
-import Home from './Views/Home';
 import Query from './Components/Query';
 import Auth from './Views/Auth';
 import Dashboard from './Views/Dashboard';
-import {useState} from 'react'
-
+import {useState, useEffect} from 'react'
+import Gate from './Views/Gate';
+import axios from 'axios'
+import app from './Components/LoginManager'
 
 function App(props) {
   const [tokens, setTokens] = useState();
+  const [user, setUser] = useState(false);
+  const [code, setCode] = useState();
+  const [userId, setUserId] = useState();
+
+    const getAuth = async (url) => {
+    await axios(url)
+    .then((res) => {
+      console.log(res.data)
+        app.database().ref('user/' + userId.uid).set({
+          hasDexcomTokens: true,
+          accessToken: res.data.access_token,
+          refreshToken: res.data.refresh_token
+        })
+    })
+  }
+
+  useEffect(() => {
+    if(code && userId) {
+      console.log(userId, code, 'fuck yes')
+      let auth = getAuth(`http://localhost:5000/get-auth/?code=${code}`) 
+    }
+  }, [userId,code]);
 
   return (
     <div className="App">
       <Router>
-      <Query/>
+        <Query setCode={setCode} userId={userId}/>
+        { user ? <Redirect to="/dashboard" /> : <Redirect to="/" />}
         <Switch>
-          <Route exact path="/">
-            <Home/>
-          </Route>
+          <Route exact path="/" render={(props) => 
+          <Gate 
+              user={user}
+              setUser={setUser}
+              userId={userId}
+              setUserId={setUserId} />} />
           <Route path="/get-auth/:code" render={(props) => <Auth code={props} setTokens={setTokens}/>}>
           </Route>
-          <Route exact path="/dashboard" render={(props) => <Dashboard tokens={tokens}/>} />
+          <Route exact path="/dashboard" render={(props) => <Dashboard tokens={tokens} userId={userId} user={user} setUser={setUser}/>} code={code} />
           
         </Switch>
       </Router>
