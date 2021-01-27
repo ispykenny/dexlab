@@ -9,14 +9,15 @@ import app from '../Components/LoginManager'
 const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
   const [readings, setReadings] = useState();
   const [mounted, setMounted] = useState(false);
-  const [entryDate, setEntryDate] = useState(31);
+  const [entryDate, setEntryDate] = useState(1);
   const [fetchedTokens, setTokes] = useState();
   const [value, setValue] = useState('')
   const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
   const [dataHasLoaded, setDataHasLoaded] = useState(false);
   
   useEffect(() => {
-    console.log(props, code)
+    console.log('working?')
+    setEntryDate(1);
     if(!mounted) {
       // console.log(userId)
       if(userId) {
@@ -27,7 +28,7 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
 
           setHasDexcomTokens(usere.hasDexcomTokens)
           
-          console.log(usere, 'user info')
+  
           setTokes(usere);
           
           console.log(fetchedTokens)
@@ -47,20 +48,29 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
       .catch(error => error)
   }
 
-  const getSomeData = async (entryDate) => {
-    setEntryDate(entryDate)
+  const getSomeData = async (newDate = entryDate) => {
+    setEntryDate(newDate)
     setDataHasLoaded(false)
-    const date = moment().format('YYYY-MM-DDTHH:MM:ss');
-    const startDate = moment().subtract(entryDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
+
+    const date = await moment().format('YYYY-MM-DDTHH:MM:ss');
+    const startDate = await moment().subtract(entryDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
+
     let theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${fetchedTokens.accessToken}&refresh_token=${fetchedTokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
+    
+    app.database().ref('user/' + userId.uid).set({
+      hasDexcomTokens: true,
+      accessToken: theReadings.data.settings.access_token,
+      refreshToken: theReadings.data.settings.refresh_token
+    })
+
+    let otherStuff = await dataFetcher(`http://localhost:5000/data?access_token=${theReadings.data.settings.access_token}&refresh_token=${theReadings.data.settings.refresh_token}&start_date=2020-10-25&now_date=2021-01-25`)
+    console.log(otherStuff)
     setReadings(theReadings);
     setDataHasLoaded(true)
   }
 
   useEffect(() => {
     if(fetchedTokens) {
-      console.log(fetchedTokens.accessToken, fetchedTokens.refreshToken)
-      console.log(entryDate)
       getSomeData();
     }
   },[hasDexcomTokens, fetchedTokens])
