@@ -3,35 +3,28 @@ import axios from 'axios';
 import Readings from '../Components/Readings';
 import moment from 'moment';
 import SignoutBtn from '../Components/SignOutBtn'
-import firebase from 'firebase/app';
 import app from '../Components/LoginManager'
+import AddedInfo from '../Components/AddedInfo';
+import DateRange from '../Components/DateRange';
 
 const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
   const [readings, setReadings] = useState();
   const [mounted, setMounted] = useState(false);
   const [entryDate, setEntryDate] = useState(1);
   const [fetchedTokens, setTokes] = useState();
-  const [value, setValue] = useState('')
   const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
   const [dataHasLoaded, setDataHasLoaded] = useState(false);
+  const [ additionalInfo , setAdditionalInfo] = useState();
   
   useEffect(() => {
-    console.log('working?')
-    setEntryDate(1);
     if(!mounted) {
-      // console.log(userId)
       if(userId) {
         app.database().ref('/user/' + userId.uid).once('value').then((snapshot) => {
           const notUser =  {hasDexcomTokens: false}
           var username = (snapshot.val() && snapshot.val()) || notUser;
           const usere = username;
-
           setHasDexcomTokens(usere.hasDexcomTokens)
-          
-  
           setTokes(usere);
-          
-          console.log(fetchedTokens)
         });
         setMounted(true)
       }
@@ -40,7 +33,7 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
       setMounted(false);
       setTokes('')
     }
-  }, [ user, userId, value])
+  }, [ user, userId])
 
   const dataFetcher = (url) => {
     return axios(url)
@@ -48,14 +41,23 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
       .catch(error => error)
   }
 
-  const getSomeData = async (newDate = entryDate) => {
-    setEntryDate(newDate)
+  const getSomeData = async (newDate = 1) => {
     setDataHasLoaded(false)
+    setEntryDate(newDate)
+    
+    const date = await moment().add(1 , 'days').format('YYYY-MM-DDTHH:MM:ss');
+    const startDate = await moment().subtract(newDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
+    const currentInfoDate = moment().add(1, 'days').format('YYYY-MM-DD');
+    const startInfoDate = moment().subtract(newDate, 'days').format('YYYY-MM-DD')
+    const theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${fetchedTokens.accessToken}&refresh_token=${fetchedTokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
 
-    const date = await moment().format('YYYY-MM-DDTHH:MM:ss');
-    const startDate = await moment().subtract(entryDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
-
-    let theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${fetchedTokens.accessToken}&refresh_token=${fetchedTokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
+    const newTokens = {
+      hasDexcomTokens: true,
+      accessToken: theReadings.data.settings.access_token,
+      refreshToken: theReadings.data.settings.refresh_token
+    }
+    console.log(newTokens)
+    // setTokes(newTokens)
     
     app.database().ref('user/' + userId.uid).set({
       hasDexcomTokens: true,
@@ -63,36 +65,39 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
       refreshToken: theReadings.data.settings.refresh_token
     })
 
-    let otherStuff = await dataFetcher(`http://localhost:5000/data?access_token=${theReadings.data.settings.access_token}&refresh_token=${theReadings.data.settings.refresh_token}&start_date=2020-10-25&now_date=2021-01-25`)
-    console.log(otherStuff)
     setReadings(theReadings);
+    const userInfo = await dataFetcher(`http://localhost:5000/data?access_token=${theReadings.data.settings.access_token}&refresh_token=${theReadings.data.settings.refresh_token}&start_date=${startInfoDate}&now_date=${currentInfoDate}`)
+    setHasDexcomTokens(true)
+    setAdditionalInfo(userInfo)
     setDataHasLoaded(true)
+    
   }
 
   useEffect(() => {
-    if(fetchedTokens) {
+    if(fetchedTokens && hasDexcomTokens) {
       getSomeData();
+      setHasDexcomTokens(true)
     }
-  },[hasDexcomTokens, fetchedTokens])
+  },[hasDexcomTokens, fetchedTokens, setHasDexcomTokens])
   
-
 
   return (
     <div>
       {mounted ? userId.displayName : '' }
-      {hasDexcomTokens ? '' : (
+      <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
+      <br/>
+      {hasDexcomTokens ? (
+        <div>
+          <DateRange getSomeData={getSomeData} entryDate={entryDate}/>
+          <AddedInfo additionalInfo={additionalInfo} dataHasLoaded={dataHasLoaded}/>
+        </div>
+      ) : (
         <div><p>Connect your Dexcom Account</p><a href="https://api.dexcom.com/v2/oauth2/login?client_id=J0IbzpVpCwyHz7WjUC7eLxHFgPU0PDqV&redirect_uri=http://localhost:3000&response_type=code&scope=offline_access">Login</a></div>
       ) }
 
-      <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
-
-      
-      <button onClick={() => getSomeData(31)}>31 days</button>
-      <button onClick={() => getSomeData(60)}>60 days</button>
-      <button onClick={() => getSomeData(90)}>90 days</button>
-      <button onClick={() => getSomeData(entryDate)}>Refresh</button>
-      Dashboard , { dataHasLoaded ? <Readings readings={readings} days={entryDate}/> : <div>Loading readings...</div>} 
-      <h1></h1>
+      {hasDexcomTokens ? (
+        <Readings dataHasLoaded={dataHasLoaded} readings={readings} days={entryDate}/>
+      ) : ''}
     </div>
   )
 }

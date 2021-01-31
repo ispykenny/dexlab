@@ -18,8 +18,9 @@ function App(props) {
   const [user, setUser] = useState(false);
   const [code, setCode] = useState();
   const [userId, setUserId] = useState();
+  const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
 
-    const getAuth = async (url) => {
+  const getAuth = async (url) => {
     await axios(url)
     .then((res) => {
       console.log(res.data)
@@ -28,6 +29,7 @@ function App(props) {
           accessToken: res.data.access_token,
           refreshToken: res.data.refresh_token
         })
+        setHasDexcomTokens(true)
     })
   }
 
@@ -49,10 +51,11 @@ function App(props) {
               user={user}
               setUser={setUser}
               userId={userId}
+              setHasDexcomTokens={setHasDexcomTokens}
               setUserId={setUserId} />} />
           <Route path="/get-auth/:code" render={(props) => <Auth code={props} setTokens={setTokens}/>}>
           </Route>
-          <Route exact path="/dashboard" render={(props) => <Dashboard tokens={tokens} userId={userId} user={user} setUser={setUser}/>} code={code} />
+          <Route exact path="/dashboard"  render={(props) => <Dashboard tokens={tokens} userId={userId} user={user} setUser={setUser}/>} code={code} setHasDexcomTokens={setHasDexcomTokens} hasDexcomTokens={hasDexcomTokens}/>
           
         </Switch>
       </Router>

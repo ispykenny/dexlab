@@ -1,20 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import moment from 'moment'
+import Chart from 'react-apexcharts'
 
 const dateCleanUp = (orignalDate) => {
   return moment(orignalDate).format('MMMM Do YYYY, h:mm:ss a')
 }
 
-const Readings = ({readings, days}) => {
-  // console.log(readings.data.dexcom)
-  const [thesetofreadings, setthesetofreadings] = useState([]);
+const Readings = ({readings, days, dataHasLoaded}) => {
 
-  useEffect(() => {
-    readings.data.dexcom.egvs.forEach((item) => {
-      setthesetofreadings(t => [...thesetofreadings, item.value])
-    })
-    console.log(thesetofreadings)
-  },[])
 
   const TotalResults = () => {
     return (
@@ -39,25 +32,61 @@ const Readings = ({readings, days}) => {
     )
   }
 
-  const TimelineResults = () => {
-    let lowest = Math.min(...thesetofreadings);
-    let highest = Math.max(...thesetofreadings);
-
+  const Loading = () => {
     return (
       <div>
-        Your lowest reading was {lowest} and your highest reading was {highest}
+       
       </div>
     )
-
-    
   }
+
+  const Charter = () => {
+    if(dataHasLoaded) {
+      let dataa = [];
+      let time = [];
+      readings.data.dexcom.egvs.forEach((item) =>{
+        dataa.push(item.value)
+        time.push(moment(item.displayTime).format('YYYY-MM-DD h:mm:ss a'))
+      })
+      let optionsAll = {
+        options: {
+          chart: {
+            id: 'DexLab Graph'
+          },
+          xaxis: {
+            labels: {
+              show: false
+            },
+            categories: time.reverse()
+          }
+        },
+        series: [{
+          name: 'Glucose Reading',
+          data: dataa.reverse()
+        }] 
+      }
+      return (
+        <Chart options={optionsAll.options} type="area" series={optionsAll.series}  width={'100%'} height={320} />
+      )
+    } else {
+      return <div>Generating graph....</div>
+    }
+
+  }
+
+  const ShowChart = () => {
+    if(dataHasLoaded) {
+      return <TotalResults/>
+    } else {
+      return <Loading/>
+    }
+  }
+
 
   return (
     <>
-      <h3>Recent Readings</h3>
-      <TotalResults/>
-      <TimelineResults/>
-      <DisplayReadings/>
+      <ShowChart/>
+      <Charter/>
     </>
   )
 }

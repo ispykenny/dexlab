@@ -11,7 +11,6 @@ const Gate = ({user, userId, setUser, setUserId}) => {
       if(firebaseUser) {
         setUserId(firebaseUser)
         setUser(true)
-        console.log(firebaseUser)
       } else {
         setUser(false)
       }
