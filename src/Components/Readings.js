@@ -46,7 +46,7 @@ const Readings = ({readings, days, dataHasLoaded}) => {
       let time = [];
       readings.data.dexcom.egvs.forEach((item) =>{
         dataa.push(item.value)
-        time.push(moment(item.displayTime).format('YYYY-MM-DD h:mm:ss a'))
+        time.push(moment(item.displayTime).format('MMM Do h:mm:ss a'))
       })
       let optionsAll = {
         options: {
@@ -55,7 +55,7 @@ const Readings = ({readings, days, dataHasLoaded}) => {
           },
           xaxis: {
             labels: {
-              show: false
+              // show: false
             },
             categories: time.reverse()
           }

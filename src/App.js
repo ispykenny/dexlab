@@ -35,7 +35,6 @@ function App(props) {
 
   useEffect(() => {
     if(code && userId) {
-      console.log(userId, code, 'fuck yes')
       let auth = getAuth(`http://localhost:5000/get-auth/?code=${code}`) 
     }
   }, [userId,code]);

@@ -82,7 +82,7 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
   
 
   return (
-    <div>
+    <div className="inner">
       {mounted ? userId.displayName : '' }
       <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
       <br/>

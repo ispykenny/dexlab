@@ -1,4 +1,8 @@
-@import './Styles//login';
+@import './Styles/login';
+
+body {
+  margin: 0;
+}
 
 .bg {
   position: absolute;
@@ -8,3 +12,11 @@
   background-size: cover;
 }
 
+
+
+.inner {
+  max-width: 1200px;
+  margin: auto;
+  width: 90%;
+  position: relative;
+}

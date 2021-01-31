@@ -23,7 +23,6 @@ const Gate = ({user, userId, setUser, setUserId}) => {
     app.auth().signInWithPopup(provider)
     .then((result) => {
       setUserId(result)
-      console.log(result)
     })
     .catch(error => console.log('damn',error))
   }
@@ -33,22 +32,27 @@ const Gate = ({user, userId, setUser, setUserId}) => {
     app.auth().signInWithPopup(provider)
     .then((result) => {
       setUserId(result)
-      console.log(result)
     })
     .catch(error => console.log('damn',error))
   }
 
   return (
-    <div>
-      <h1>Welcome to Dexlab</h1>
-      <p>Get up to 90 days worth of data so you can see what your blood sugar actually means.</p>
-      <div className="inner tall">
-      <div className="login">
-        <h2>Login</h2>
-        <button onClick={loginWithGoogle}>Sign in with Google</button>
-        <button onClick={loginWithFacebook}>Sign in with Facebook</button>
+    <div className="login-wrapper">
+      <div className="login inner center">
+        <div className="login__card">
+          <div className="login__card--padding">
+            <h1>Welcome to Dexlab</h1>
+            <p>Get up to 90 days worth of data so you can see what your blood sugar actually means.</p>
+            
+            <div className="btns">
+              <h2>Login</h2>
+              <button onClick={loginWithGoogle}>Sign in with Google</button>
+              <button onClick={loginWithFacebook}>Sign in with Facebook</button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+      <div className="bg" style={{backgroundImage: `url("https://images.pexels.com/photos/552785/pexels-photo-552785.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=1080&w=1920")`}}></div>
     </div>
   )
 }
