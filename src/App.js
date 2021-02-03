@@ -6,7 +6,7 @@ import {
   Redirect
 } from "react-router-dom";
 import Query from './Components/Query';
-import Auth from './Views/Auth';
+
 import Dashboard from './Views/Dashboard';
 import {useState, useEffect} from 'react'
 import Gate from './Views/Gate';
@@ -18,9 +18,10 @@ function App(props) {
   const [user, setUser] = useState(false);
   const [code, setCode] = useState();
   const [userId, setUserId] = useState();
-  const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
+  const [dexcomTokens , setHasDexcomTokens] = useState(false);
 
   const getAuth = async (url) => {
+    setHasDexcomTokens(false)
     await axios(url)
     .then((res) => {
       console.log(res.data)
@@ -28,14 +29,18 @@ function App(props) {
           hasDexcomTokens: true,
           accessToken: res.data.access_token,
           refreshToken: res.data.refresh_token
-        })
-        setHasDexcomTokens(true)
+        }).then(() => { 
+          setTokens(res.data)
+          setHasDexcomTokens(true)
+      })
     })
+    
   }
 
   useEffect(() => {
     if(code && userId) {
       let auth = getAuth(`http://localhost:5000/get-auth/?code=${code}`) 
+      console.log(userId, 'why?')
     }
   }, [userId,code]);
 
@@ -43,18 +48,15 @@ function App(props) {
     <div className="App">
       <Router>
         <Query setCode={setCode} userId={userId}/>
-        { user ? <Redirect to="/dashboard" /> : <Redirect to="/" />}
+        { user ? <Redirect to="/dashboard" wee={'hi'} /> : <Redirect to="/" />}
         <Switch>
           <Route exact path="/" render={(props) => 
           <Gate 
               user={user}
               setUser={setUser}
               userId={userId}
-              setHasDexcomTokens={setHasDexcomTokens}
               setUserId={setUserId} />} />
-          <Route path="/get-auth/:code" render={(props) => <Auth code={props} setTokens={setTokens}/>}>
-          </Route>
-          <Route exact path="/dashboard"  render={(props) => <Dashboard tokens={tokens} userId={userId} user={user} setUser={setUser}/>} code={code} setHasDexcomTokens={setHasDexcomTokens} hasDexcomTokens={hasDexcomTokens}/>
+          <Route exact path="/dashboard"  render={(props) => <Dashboard tokens={tokens} setTokens={setTokens} userId={userId} user={user} setUser={setUser} code={code} dexcomTokens={dexcomTokens} setHasDexcomTokens={setHasDexcomTokens}/> }/>
           
         </Switch>
       </Router>

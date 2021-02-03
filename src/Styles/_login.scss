@@ -7,25 +7,32 @@
   height: 100vh;
   min-height: 600px;
   position: relative;
+
+  line-height: 1.6;
 }
 
 .login__card {
   box-sizing: content-box;
-  max-width: 500px;
-  border: 1px solid #aaa;
+  max-width: 440px;
   position: absolute;
-  top: 50%; right: 0%;
-  transform: translate(0%, -50%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
   background: white;
   border-radius: 8px;
   z-index: 9;
+  box-shadow: 0px 0px 80px rgba(#0097e6, 0.3);
   
   &--padding {
-    padding: 4em 3em;
+    padding: 4em 2em;
   }
 
   h1 {
     margin-top: 0em;
+    margin-bottom: 0;
+  }
+
+  a {
+    color: #0097e6;
   }
 }
 
@@ -34,10 +41,11 @@
     display: block;
     cursor: pointer;
     margin: auto;
+    position: relative;
     background: none;
-    border: 2px solid #aaa;
-    padding: 2em 2em;
-    min-width: 400px;
+    border: 2px solid rgb(230, 230, 230);
+    padding: 1.6em 2em;
+    min-width: 100%;
     border-radius: 4px;
     -webkit-appearance: none;
 
@@ -46,7 +54,9 @@
     }
 
     &:hover {
-      border: 2px solid #0097e6;
+      transition: all 200ms ease;
+      border: 2px solid transparent;
+      box-shadow: 0px 0px 30px rgba(#0097e6, 0.3);
     }
   }
 }

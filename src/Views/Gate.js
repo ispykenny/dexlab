@@ -42,17 +42,20 @@ const Gate = ({user, userId, setUser, setUserId}) => {
         <div className="login__card">
           <div className="login__card--padding">
             <h1>Welcome to Dexlab</h1>
-            <p>Get up to 90 days worth of data so you can see what your blood sugar actually means.</p>
+            <p>See what your past 7 days of glucose data means. See your averages, trends, and more. Sign in below to get started.</p>
             
             <div className="btns">
               <h2>Login</h2>
               <button onClick={loginWithGoogle}>Sign in with Google</button>
               <button onClick={loginWithFacebook}>Sign in with Facebook</button>
             </div>
+
+            <div style={{marginTop: 30}}>
+              Made by <a href="">@ispykenny</a>
+            </div>
           </div>
         </div>
       </div>
-      <div className="bg" style={{backgroundImage: `url("https://images.pexels.com/photos/552785/pexels-photo-552785.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=1080&w=1920")`}}></div>
     </div>
   )
 }

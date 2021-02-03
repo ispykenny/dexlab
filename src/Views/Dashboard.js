@@ -6,34 +6,43 @@ import SignoutBtn from '../Components/SignOutBtn'
 import app from '../Components/LoginManager'
 import AddedInfo from '../Components/AddedInfo';
 import DateRange from '../Components/DateRange';
+import NoDexConnected from '../Components/NoDexConnected';
 
-const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
+const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, dexcomTokens , setHasDexcomTokens}) => {
   const [readings, setReadings] = useState();
   const [mounted, setMounted] = useState(false);
   const [entryDate, setEntryDate] = useState(1);
-  const [fetchedTokens, setTokes] = useState();
-  const [hasDexcomTokens , setHasDexcomTokens] = useState(false);
   const [dataHasLoaded, setDataHasLoaded] = useState(false);
   const [ additionalInfo , setAdditionalInfo] = useState();
+
+
   
   useEffect(() => {
+    let usere;
     if(!mounted) {
       if(userId) {
         app.database().ref('/user/' + userId.uid).once('value').then((snapshot) => {
           const notUser =  {hasDexcomTokens: false}
           var username = (snapshot.val() && snapshot.val()) || notUser;
-          const usere = username;
-          setHasDexcomTokens(usere.hasDexcomTokens)
-          setTokes(usere);
+          // something aint working here.
+          // getData() is being executed before state is updating.
+          console.log(user.hasDexcomTokens, 'response')
+          setHasDexcomTokens(user.hasDexcomTokens)
+          setTokens(usere);
+          console.log(tokens, 'state')
         });
         setMounted(true)
       }
     }
     return () => {
       setMounted(false);
-      setTokes('')
+      setTokens('')
+      setUser(false)
+      setHasDexcomTokens(false);
+      setAdditionalInfo(false);
+      console.log('i happened')
     }
-  }, [ user, userId])
+  }, [ user, user, setTokens])
 
   const dataFetcher = (url) => {
     return axios(url)
@@ -49,7 +58,7 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
     const startDate = await moment().subtract(newDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
     const currentInfoDate = moment().add(1, 'days').format('YYYY-MM-DD');
     const startInfoDate = moment().subtract(newDate, 'days').format('YYYY-MM-DD')
-    const theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${fetchedTokens.accessToken}&refresh_token=${fetchedTokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
+    const theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${tokens.accessToken}&refresh_token=${tokens.refreshToken}&start_date=${startDate}&now_date=${date}`)
 
     const newTokens = {
       hasDexcomTokens: true,
@@ -74,28 +83,39 @@ const Dashboard = ({props , code , tokens, userId , user, setUser}) => {
   }
 
   useEffect(() => {
-    if(fetchedTokens && hasDexcomTokens) {
+    console.log(dexcomTokens, 'here')
+    if(tokens && dexcomTokens) {
       getSomeData();
       setHasDexcomTokens(true)
     }
-  },[hasDexcomTokens, fetchedTokens, setHasDexcomTokens])
+  },[tokens, setHasDexcomTokens])
   
+
+  const removeAccount = () => {
+    app.database().ref('user/' + userId.uid).set(null).then(() => {
+      setHasDexcomTokens(false);
+      setUser(false)
+      setTokens(false)
+      console.log('here')
+      setMounted(false)
+    })
+  }
 
   return (
     <div className="inner">
       {mounted ? userId.displayName : '' }
-      <SignoutBtn setUser={setUser} user={user} setMounted={setMounted}/>
+      <SignoutBtn userId={userId} setUser={setUser} user={user} setMounted={setMounted}/>
       <br/>
-      {hasDexcomTokens ? (
+      {dexcomTokens ? (
         <div>
           <DateRange getSomeData={getSomeData} entryDate={entryDate}/>
           <AddedInfo additionalInfo={additionalInfo} dataHasLoaded={dataHasLoaded}/>
         </div>
       ) : (
-        <div><p>Connect your Dexcom Account</p><a href="https://api.dexcom.com/v2/oauth2/login?client_id=J0IbzpVpCwyHz7WjUC7eLxHFgPU0PDqV&redirect_uri=http://localhost:3000&response_type=code&scope=offline_access">Login</a></div>
+        <NoDexConnected/>
       ) }
 
-      {hasDexcomTokens ? (
+      {dexcomTokens ? (
         <Readings dataHasLoaded={dataHasLoaded} readings={readings} days={entryDate}/>
       ) : ''}
     </div>
