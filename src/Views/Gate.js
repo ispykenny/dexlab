@@ -22,7 +22,7 @@ const Gate = ({user, userId, setUser, setUserId}) => {
     let provider = new firebase.auth.GoogleAuthProvider();
     app.auth().signInWithPopup(provider)
     .then((result) => {
-      setUserId(result)
+      setUserId(result) 
     })
     .catch(error => console.log('damn',error))
   }
