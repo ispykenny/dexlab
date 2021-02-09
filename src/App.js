@@ -24,14 +24,15 @@ function App(props) {
     setHasDexcomTokens(false)
     await axios(url)
     .then((res) => {
-      console.log(res.data)
         app.database().ref('user/' + userId.uid).set({
           hasDexcomTokens: true,
           accessToken: res.data.access_token,
           refreshToken: res.data.refresh_token
         }).then(() => { 
           setTokens(res.data)
-          setHasDexcomTokens(true)
+          console.log(tokens)
+      }).then(() => {
+        setHasDexcomTokens(true)
       })
     })
     
@@ -57,7 +58,6 @@ function App(props) {
               userId={userId}
               setUserId={setUserId} />} />
           <Route exact path="/dashboard"  render={(props) => <Dashboard tokens={tokens} setTokens={setTokens} userId={userId} user={user} setUser={setUser} code={code} dexcomTokens={dexcomTokens} setHasDexcomTokens={setHasDexcomTokens}/> }/>
-          
         </Switch>
       </Router>
     </div>

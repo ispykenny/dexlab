@@ -11,7 +11,6 @@ const DateRange = ({getSomeData, entryDate}) => {
       <button onClick={() => getSomeData(5)}>5 days</button>
       <button onClick={() => getSomeData(6)}>6 days</button>
       <button onClick={() => getSomeData(7)}>7 days</button>
-      <button onClick={() => getSomeData(90)}>90 days</button>
       <button onClick={() => getSomeData(entryDate)}>Refresh</button>
     </div>
   )

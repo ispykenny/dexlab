@@ -18,25 +18,25 @@ const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, de
 
   
   useEffect(() => {
-    let usere;
+    let username;
     if(!mounted) {
       if(userId) {
+        console.log(tokens, 'weeeehere')
         app.database().ref('/user/' + userId.uid).once('value').then((snapshot) => {
           const notUser =  {hasDexcomTokens: false}
-          var username = (snapshot.val() && snapshot.val()) || notUser;
-          // something aint working here.
-          // getData() is being executed before state is updating.
-          console.log(user.hasDexcomTokens, 'response')
-          setHasDexcomTokens(user.hasDexcomTokens)
-          setTokens(usere);
+          username = (snapshot.val() && snapshot.val()) || notUser;
+          console.log(username.hasDexcomTokens, 'response')
+          setHasDexcomTokens(username.hasDexcomTokens)
+          setTokens(username);
+          console.log(username)
           console.log(tokens, 'state')
         });
         setMounted(true)
       }
     }
     return () => {
-      setMounted(false);
-      setTokens('')
+      setMounted(true);
+      setTokens(null)
       setUser(false)
       setHasDexcomTokens(false);
       setAdditionalInfo(false);
