@@ -42,7 +42,7 @@ const Gate = ({user, userId, setUser, setUserId}) => {
         <div className="login__card">
           <div className="login__card--padding">
             <h1>Welcome to Dexlab</h1>
-            <p>See what your past 7 days of glucose data means. See your averages, trends, and more. Sign in below to get started.</p>
+            <p>View your past 7 days of glucose data. View your averages, trends, and more. Sign in below to get started.</p>
             
             <div className="btns">
               <h2>Login</h2>
