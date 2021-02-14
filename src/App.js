@@ -20,28 +20,28 @@ function App(props) {
   const [userId, setUserId] = useState();
   const [dexcomTokens , setHasDexcomTokens] = useState(false);
 
-  const getAuth = async (url) => {
-    setHasDexcomTokens(false)
-    await axios(url)
-    .then((res) => {
-        app.database().ref('user/' + userId.uid).set({
-          hasDexcomTokens: true,
-          accessToken: res.data.access_token,
-          refreshToken: res.data.refresh_token
-        }).then(() => { 
-          setTokens(res.data)
-          console.log(tokens)
-      }).then(() => {
-        setHasDexcomTokens(true)
-      })
-    })
-    
-  }
+ 
 
   useEffect(() => {
     if(code && userId) {
+      const getAuth = async (url) => {
+        setHasDexcomTokens(false)
+        await axios(url)
+        .then((res) => {
+            app.database().ref('user/' + userId.uid).set({
+              hasDexcomTokens: true,
+              access_token: res.data.access_token,
+              refresh_token: res.data.refresh_token
+            }).then(() => { 
+              setTokens(res.data)
+          }).then(() => {
+            setHasDexcomTokens(true)
+          })
+        })
+        
+      }
+
       let auth = getAuth(`http://localhost:5000/get-auth/?code=${code}`) 
-      console.log(userId, 'why?')
     }
   }, [userId,code]);
 

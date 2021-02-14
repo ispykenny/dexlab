@@ -13,13 +13,7 @@ const SignoutBtn = ({setUser, setMounted, userId}) => {
     setMounted(false)
   }
   const deleteAccount = () => {
-    app.database().ref('user/' + userId.uid).set(null).then(() => {
-    userId.delete().then(() => {
-        app.auth().signOut()
-        setUser(false)
-        setMounted(false)
-      }).then(() => window.location.replace("/"))
-    })
+    app.database().ref('user/' + userId.uid).set(null)
   }
 
 
