@@ -11,6 +11,7 @@ const SignoutBtn = ({setUser, setMounted, userId}) => {
     app.auth().signOut()
     setUser(false)
     setMounted(false)
+    
   }
   const deleteAccount = () => {
     app.database().ref('user/' + userId.uid).set(null)
@@ -19,9 +20,7 @@ const SignoutBtn = ({setUser, setMounted, userId}) => {
 
   return (
     <>
-      <button onClick={deleteAccount}>Delete Account</button>
       <button onClick={doLogoutThings}>Logout</button>
-      <button onClick={() => console.log(app.auth().currentUser)} >Check</button>
     </>
   )
 }

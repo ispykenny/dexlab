@@ -5,7 +5,6 @@ const AddedInfo = ({dataHasLoaded, additionalInfo}) => {
   const ShowResults = () => {
 
     if(dataHasLoaded) {
-      console.log({additionalInfo})
       return (
         <div>
           <h1>Average Reading {additionalInfo.data.mean}</h1>
