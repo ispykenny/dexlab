@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import Login from '../Components/Login';
 import app from '../Components/LoginManager';
 import firebase from 'firebase/app';
 import "firebase/auth";

@@ -15,6 +15,7 @@ const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, de
   const [dataHasLoaded, setDataHasLoaded] = useState(false);
   const [ additionalInfo , setAdditionalInfo] = useState();
   const [ogValues, setOgValues] = useState(false);
+  const [currentTokens, setCurrentTokens] = useState();
 
 
   
@@ -51,12 +52,19 @@ const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, de
 
   useEffect(() => {
     if(tokens && !ogValues) {
-      if(tokens.hasDexcomTokens) {
-        getSomeData();
-        setOgValues(true)
+      if(tokens) {
+        if(dexcomTokens) {
+          getSomeData();
+          setOgValues(true)
+        }
       }
     }
-  }, [tokens])
+    if(dexcomTokens) {
+      setCurrentTokens(tokens)
+      // getSomeData();
+    }
+    {console.log({dexcomTokens})}
+  }, [tokens, dexcomTokens])
   
 
   const dataFetcher = (url) => {
@@ -68,11 +76,14 @@ const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, de
   const getSomeData = async (newDate = 1) => {
     setDataHasLoaded(false)
     setEntryDate(newDate)
+    console.log('getSomeData')
+
     
     const date = await moment().add(1 , 'days').format('YYYY-MM-DDTHH:MM:ss');
     const startDate = await moment().subtract(newDate, 'days').format('YYYY-MM-DDTHH:MM:ss');
     const currentInfoDate = moment().add(1, 'days').format('YYYY-MM-DD');
     const startInfoDate = moment().subtract(newDate, 'days').format('YYYY-MM-DD')
+    console.log(tokens.access_token , 'inside get some data')
     const theReadings = await dataFetcher(`http://localhost:5000/get-data?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&start_date=${startDate}&now_date=${date}`)
 
     const newTokens = {
@@ -107,7 +118,6 @@ const Dashboard = ({props , code , tokens, setTokens, userId , user, setUser, de
       {mounted ? userId.displayName : '' }
       <SignoutBtn userId={userId} setUser={setUser} user={user} setMounted={setMounted}/>
       <br/>
-      {console.log({dexcomTokens})}
       {dexcomTokens ? (
         <div>
           <DateRange getSomeData={getSomeData} entryDate={entryDate}/>
