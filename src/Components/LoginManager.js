@@ -4,13 +4,12 @@ import "firebase/auth";
 import "firebase/database"
 
 const app = firebase.initializeApp({
-  apiKey: "AIzaSyA8D1PueW6BXY9B2SS0MFqZDJegj9Ew8zU",
-    authDomain: "dexlab-2dbbc.firebaseapp.com",
-    projectId: "dexlab-2dbbc",
-    storageBucket: "dexlab-2dbbc.appspot.com",
-    messagingSenderId: "191218089232",
-    appId: "1:191218089232:web:097caf8ccf27b93f19f995",
-    measurementId: "G-RD7HZMPEYR"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: "dexlabs-22c5b.firebaseapp.com",
+  projectId: "dexlabs-22c5b",
+  storageBucket: "dexlabs-22c5b.appspot.com",
+  messagingSenderId: "182665905421",
+  appId: "1:182665905421:web:40f577fd86d395597cdc44"
 })
 
 export const auth = app.auth();
