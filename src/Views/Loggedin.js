@@ -3,10 +3,12 @@ import {Sign_out} from '../Components/loginservice'
 import app from '../Components/LoginManager';
 import moment from 'moment';
 import axios from 'axios';
+import Readings from '../Components/Readings';
 
 const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
   const [dexcom_keys, set_dexcom_keys] = useState(false);
   const [mounted, set_mounted] = useState(false);
+  const [glucose_readings, set_glucose_readings] = useState(false);
 
   const delete_user = () => {
     const user = app.auth().currentUser;
@@ -96,12 +98,12 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       if(tokens.hasDexcomTokens && !mounted) {
         set_mounted(true)
         axios
-        .get(`http://localhost:5000/get-data?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&start_date=${moment().subtract(30, 'days').format('YYYY-MM-DDTHH:MM:ss')}&now_date=${moment().add(1 , 'days').format('YYYY-MM-DDTHH:MM:ss')}`)
+        .get(`http://localhost:5000/get-data?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&start_date=${moment().subtract(7, 'days').format('YYYY-MM-DDTHH:MM:ss')}&now_date=${moment().add(0, 'days').format('YYYY-MM-DDTHH:MM:ss')}`)
         .then((res) => {
           let at = res.data.settings.access_token;
           let rt = res.data.settings.refresh_token;
           set_dexcom_keys(res.data.settings);
-          console.log(res.data)
+          set_glucose_readings(res.data.dexcom)
           app
           .database()
           .ref('user/' + user_id.uid)
@@ -145,6 +147,7 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       <button onClick={(() => deleteDb())}>Delete database</button>
       <button onClick={() => Sign_out(setUserId)}>Sign out</button>
       <button onClick={() => delete_user()}>Delete_account</button>
+      <Readings readings={glucose_readings}/>
     </div>
   )
 }
