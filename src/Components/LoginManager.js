@@ -4,7 +4,7 @@ import "firebase/auth";
 import "firebase/database"
 
 const app = firebase.initializeApp({
-  apiKey: process.env.REACT_APP_API_KEY,
+  apiKey: process.env.REACT_APP_API_KEY, 
   authDomain: "dexlab-2dbbc.firebaseapp.com",
   projectId: "dexlab-2dbbc",
   storageBucket: "dexlab-2dbbc.appspot.com",
