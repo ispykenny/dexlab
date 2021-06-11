@@ -1,15 +1,19 @@
 import './App.scss';
 import {
   BrowserRouter as Router,
-  Switch,
   Route,
-  Redirect
 } from "react-router-dom";
+import {
+  useState, 
+  useEffect
+} from 'react'
+import {
+  check_if_logged_in
+} from './Utils/firebase-services'
 import Query from './Components/Query';
-import {useState, useEffect} from 'react'
 import Home from './Views/Home'
-import {check_if_logged_in} from './Components/loginservice'
-import Loggedin from './Views/Loggedin';
+import Dashboard from './Views/Dashboard';
+import Director from './Components/Director';
 
 function App(props) {
   const [user_id, setUserId] = useState(false);
@@ -18,18 +22,6 @@ function App(props) {
   useEffect(() => {
     check_if_logged_in(setUserId);
   }, [user_id]);
-
-  const Director = () => {
-    if(user_id || api_code ) {
-      return (
-        <Redirect to="/logged-in" user_id={user_id}/>
-      )
-    } else {
-      return (
-        <Redirect exact to="/"/>
-      )
-    }
-  }
 
   return (
     <div className="App">
@@ -45,9 +37,9 @@ function App(props) {
           } 
           />
         <Route 
-          path="/logged-in" 
+          path="/dashboard" 
           render={() => 
-            <Loggedin 
+            <Dashboard 
               user_id={user_id} 
               setUserId={setUserId}
               set_api_code={set_api_code}
@@ -55,7 +47,10 @@ function App(props) {
             />
           }
           />
-        <Director/>
+        <Director 
+          user_id={user_id} 
+          api_code={api_code} 
+        />
       </Router>
     </div>
   );

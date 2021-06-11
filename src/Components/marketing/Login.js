@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Login_with_google, Login_with_email, Create_account} from '../loginservice';
+import {Login_with_google, Login_with_email, Create_account} from '../../Utils/firebase-services';
 
 const Login = ({setUserId}) => {
   const [login_message, set_message ] = useState();

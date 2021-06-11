@@ -21,9 +21,11 @@ import Chart from 'react-apexcharts'
 const Readings = ({readings}) => {
   
   if(readings) {
+    
     const glucose_readings = [];
     readings.egvs.forEach(reading => glucose_readings.push(reading.value))
-   const options = {
+
+    const options = {
       chart: {
         id: 'apexchart-example'
       },
@@ -31,7 +33,6 @@ const Readings = ({readings}) => {
         categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
       }
     }
-    console.log(glucose_readings)
     const series =  [{
       name: 'series-1',
       data: glucose_readings
@@ -47,7 +48,14 @@ const Readings = ({readings}) => {
     }
   
     return (
-      <Chart options={options} series={series} type="area" width={900} height={320} design={theme}/>
+      <Chart 
+        options={options} 
+        series={series} 
+        type="area" 
+        width={900} 
+        height={320} 
+        design={theme} 
+      />
     )
   } else {
     return <div>Loading...</div>;

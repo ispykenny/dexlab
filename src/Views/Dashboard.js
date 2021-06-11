@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {Sign_out} from '../Components/loginservice'
-import app from '../Components/LoginManager';
+import {Sign_out, Disconnect_dexcom} from '../Utils/firebase-services'
+import app from '../Utils/firebase-settings';
 import moment from 'moment';
 import axios from 'axios';
 import Readings from '../Components/Readings';
+import dexcom_tokens from '../Utils/set-intial-tokens';
 
 const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
   const [dexcom_keys, set_dexcom_keys] = useState(false);
@@ -15,66 +16,11 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
     user
     .delete()
     .then(() => {
-      deleteDb();
-      console.log('user deleted')
+      Disconnect_dexcom(user_id.uid, set_dexcom_keys)
     })
     .catch((err) => console.log(err))
   }
 
-  const addToDb = () => {
-    app
-    .database()
-    .ref('user/' + user_id.uid)
-    .set({
-      hasDexcomTokens: true,
-      access_token: '',
-      refresh_token: ''
-    }).then(() => {
-      app
-      .database()
-      .ref('/user/' + user_id.uid)
-      .once('value')
-      .then((snapshot) => {
-        let username = snapshot.val() || 'No data';
-        set_dexcom_keys(username)
-      });
-    })
-  }
-
-  const deleteDb = () => {
-    app
-    .database()
-    .ref('user/' + user_id.uid)
-    .set(null)
-    set_dexcom_keys(false)
-  }
-
-  const dexcom_tokens = async (user_id, code) => {
-    let the_data = await axios(`http://localhost:5000/get-auth/?code=${code}`)
-    .then((res) => res.data)
-    .catch((err) => console.log(err))
-    
-    if(the_data) {
-      app
-      .database()
-      .ref('user/' + user_id.uid)
-      .set({
-        hasDexcomTokens: true,
-        access_token: the_data.access_token,
-        refresh_token: the_data.refresh_token
-      }).then(() => {
-        app
-        .database()
-        .ref('/user/' + user_id.uid)
-        .once('value')
-        .then((snapshot) => {
-          let username = snapshot.val() || 'No data';
-          set_dexcom_keys(username)
-        });
-      })
-    }
-    
-  }
 
   useEffect(() => {
     if(user_id) {
@@ -83,11 +29,11 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       .ref('/user/' + user_id.uid)
       .once('value')
       .then((snapshot) => {
-        let username = snapshot.val() || 'No data';
+        const username = snapshot.val() || 'No data';
         set_dexcom_keys(username)
       });
       if(api_code) {
-        dexcom_tokens(user_id, api_code)
+        dexcom_tokens(user_id, api_code, set_dexcom_keys)
       }
     }
 
@@ -125,14 +71,14 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
         return <div>no</div>
       }
     }, []);
-    return <div>hi</div>
+    return null
   }
 
 
 
   return (
     <div>
-      {dexcom_keys.hasDexcomTokens ? null : (
+      {dexcom_keys ? null : (
         <div>
           <a href="https://api.dexcom.com/v2/oauth2/login?client_id=J0IbzpVpCwyHz7WjUC7eLxHFgPU0PDqV&redirect_uri=http://localhost:3000/logged-in&response_type=code&scope=offline_access">Login</a>
         </div>
@@ -142,9 +88,7 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
           <Data tokens={dexcom_keys}/>
         </div>
       ) : null}
-      {JSON.stringify(dexcom_keys)}
-      <button onClick={(() => addToDb())}>add to database</button>
-      <button onClick={(() => deleteDb())}>Delete database</button>
+      <button onClick={(() => Disconnect_dexcom(user_id.uid, set_dexcom_keys))}>Disconnect Your Dexcom</button>
       <button onClick={() => Sign_out(setUserId)}>Sign out</button>
       <button onClick={() => delete_user()}>Delete_account</button>
       <Readings readings={glucose_readings}/>

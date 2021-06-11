@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import app from "./LoginManager";
+import app from "./firebase-settings";
 
 const check_if_logged_in = setUserId => {
   app
@@ -59,10 +59,19 @@ const Login_with_google = setUserId => {
   .catch(error => console.log('damn',error))
 }
 
+const Disconnect_dexcom = (setUserId, set_dexcom_keys) => {
+  app
+    .database()
+    .ref('user/' + setUserId)
+    .set(null)
+    set_dexcom_keys(false)
+}
+
 export {
   Create_account,
   check_if_logged_in,
   Sign_out,
   Login_with_email,
-  Login_with_google
+  Login_with_google,
+  Disconnect_dexcom
 };
