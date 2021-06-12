@@ -5,11 +5,13 @@ import moment from 'moment';
 import axios from 'axios';
 import Readings from '../Components/Readings';
 import dexcom_tokens from '../Utils/set-intial-tokens';
+import Select from '../Components/Select';
 
 const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
   const [dexcom_keys, set_dexcom_keys] = useState(false);
   const [mounted, set_mounted] = useState(false);
   const [glucose_readings, set_glucose_readings] = useState(false);
+  const [days_of_readings, set_days_of_readings] = useState(1);
 
   const delete_user = () => {
     const user = app.auth().currentUser;
@@ -44,7 +46,7 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       if(tokens.hasDexcomTokens && !mounted) {
         set_mounted(true)
         axios
-        .get(`http://localhost:5000/get-data?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&start_date=${moment().subtract(7, 'days').format('YYYY-MM-DDTHH:MM:ss')}&now_date=${moment().add(0, 'days').format('YYYY-MM-DDTHH:MM:ss')}`)
+        .get(`http://localhost:5000/get-data?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&start_date=${moment().subtract(1, 'days').format('YYYY-MM-DDTHH:MM:ss')}&now_date=${moment().add(0, 'days').format('YYYY-MM-DDTHH:MM:ss')}`)
         .then((res) => {
           let at = res.data.settings.access_token;
           let rt = res.data.settings.refresh_token;
@@ -70,11 +72,9 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       } else {
         return <div>no</div>
       }
-    }, []);
+    }, [days_of_readings, set_days_of_readings]);
     return null
   }
-
-
 
   return (
     <div>
@@ -91,6 +91,9 @@ const Loggedin = ({user_id, setUserId, set_api_code, api_code}) => {
       <button onClick={(() => Disconnect_dexcom(user_id.uid, set_dexcom_keys))}>Disconnect Your Dexcom</button>
       <button onClick={() => Sign_out(setUserId)}>Sign out</button>
       <button onClick={() => delete_user()}>Delete_account</button>
+      <Select 
+        set_days_of_readings={set_days_of_readings} 
+      />
       <Readings readings={glucose_readings}/>
     </div>
   )

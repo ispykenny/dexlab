@@ -1,6 +1,8 @@
 import React from 'react';
 import Chart from 'react-apexcharts'
-
+import {
+  CircularProgress
+} from '@material-ui/core';
 /*
   @param {array} readings - 
   data provided by Dexcom API
@@ -24,41 +26,50 @@ const Readings = ({readings}) => {
     
     const glucose_readings = [];
     readings.egvs.forEach(reading => glucose_readings.push(reading.value))
-
     const options = {
       chart: {
-        id: 'apexchart-example'
+        id: 'apexchart-example',
+        animations: {
+          speed: 800
+        },
       },
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
+      theme: {
+        monochrome: {
+          enabled: true,
+          color: '#255aee',
+          shadeTo: 'dark',
+          shadeIntensity: 0.65
+        }
+      },
+      xaxis:{
+        categories: ["Jan", "Feb", "Mar", "Dec"]
       }
     }
+
+    
     const series =  [{
-      name: 'series-1',
+      name: 'Reading',
       data: glucose_readings
     }]
 
-    const theme = {
-      monochrome: {
-        enabled: true,
-        color: 'red',
-        shadeTo: 'light',
-        shadeIntensity: 0.65
-      }
-    }
   
     return (
-      <Chart 
-        options={options} 
-        series={series} 
-        type="area" 
-        width={900} 
-        height={320} 
-        design={theme} 
-      />
+      <div className="chart element">
+        <Chart 
+          options={options} 
+          series={series} 
+          type="area" 
+          width={'100%'} 
+          height={400}
+        />
+      </div>
     )
   } else {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    )
   }
 }
 
