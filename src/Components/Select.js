@@ -1,22 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 
-const Select = ({set_days_of_readings}) => {
-  const days = []
-  for(let i = 0; i <= 90; i++) {
-    days.push(i)
-  }
-
-  const changeDate = value => {
-    set_days_of_readings(value);
-  }
-
+const Select = ( { onChange } ) => {
+  const days = [1,3,7,10, 14, 21, 30, 45, 60, 90];
   return (
-    <select onChange={(event) => changeDate(event.target.value)}>
-      {days.map((day, index) => (
-        <option value={day} key={index}>{day}</option>
-      ))}
-    </select>
+    <div>
+      
+      <span>Select range of data  </span>
+      <select onChange={onChange}>
+        {days.map((day, index) => (
+          <option value={day} key={index}>{day}</option>
+        ))}
+      </select>
+    </div>
   )
 }
 

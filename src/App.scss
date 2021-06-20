@@ -13,14 +13,65 @@ body {
 @import './Styles/global';
 @import './Styles/pages/home';
 @import './Styles/components/login';
+@import './Styles/components/nav';
 
 .chart {
-  background: #f6f6f6;
+  background: #ffffff;
   // overflow: hidden;
   padding: 1em 1em 0em 1em;
-  width: 800px;
+  // width: 800px;
   // width: 90%;
   margin: auto;
-  border-radius: 40px;
-  overflow: auto;
+  border-radius: 20px;
+}
+
+
+.dashboard {
+  height: 100vh;
+  background: #fff;
+}
+
+.card-family {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 30px;
+  row-gap: 30px;
+}
+
+.card {
+  text-align: center;
+  background: #3498db;
+  color: white;
+  padding: 1em;
+  border-radius: 10px;
+  box-shadow: 0px 0px 40px rgba(black,  0.09);
+  opacity: 0.5;
+  transition: all 500ms ease;
+  transition-delay: 500ms;
+}
+
+.loaded .card {
+  opacity: 1;
+  transition-delay: 600ms;
+}
+
+.result {
+  font-size: 4em;
+  font-weight: 700;
+
+  small {
+    font-size: 15px;
+  }
+}
+
+.tiles {
+  min-height: 240px;
+  position: relative;
+  padding-top: 3em;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%; left:50%;
+  transform: translate(-50%, -50%);
 }

@@ -1,18 +1,22 @@
 import React from 'react';
-
-export const Nav = () => {
+import logo from '../images/logo.png'
+const Nav = () => {
   return (
     <header>
       <div className="inner flex align-items jc-sb">
-        <a href="" id="site-name">DexLabs</a>
+        <a href="" id="site-name">
+          CODA
+        </a>
         <nav>
-          <ul className="flex">
-            <li>
-              <a href="">Contact me</a>
-            </li>
-          </ul>
+          <button className="menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </nav>
       </div>
     </header>
   )
 }
+
+export default Nav;

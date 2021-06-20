@@ -67,11 +67,22 @@ const Disconnect_dexcom = (setUserId, set_dexcom_keys) => {
     set_dexcom_keys(false)
 }
 
+const delete_user = () => {
+  const user = app.auth().currentUser;
+  user
+  .delete()
+  .then(() => {
+    Disconnect_dexcom(user_id.uid, set_dexcom_keys)
+  })
+  .catch((err) => console.log(err))
+}
+
 export {
   Create_account,
   check_if_logged_in,
   Sign_out,
   Login_with_email,
   Login_with_google,
-  Disconnect_dexcom
+  Disconnect_dexcom,
+  delete_user
 };
